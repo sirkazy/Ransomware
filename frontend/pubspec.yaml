@@ -1,0 +1,41 @@
+name: ransomware_guardian
+description: "Behavior-Based Ransomware Detection and Prevention Framework"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  # State Management
+  provider: ^6.1.2
+
+  # Networking
+  dio: ^5.4.3+1
+
+  # Routing
+  go_router: ^13.2.4
+
+  # Charts
+  fl_chart: ^0.68.0
+
+  # Typography
+  google_fonts: ^6.2.1
+
+  # UI Effects
+  shimmer: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
