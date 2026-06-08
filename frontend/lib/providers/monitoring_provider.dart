@@ -14,7 +14,6 @@ class MonitoringProvider extends ChangeNotifier {
 
   MonitoringProvider(this._apiService);
 
-  // ── Getters ───────────────────────────────────────────────────────
   List<MonitoringActivity> get activities => _activities;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -28,7 +27,6 @@ class MonitoringProvider extends ChangeNotifier {
 
   Timer? _refreshTimer;
 
-  // ── Fetch Activities ──────────────────────────────────────────────
   Future<void> fetchActivities({bool showLoading = true}) async {
     if (showLoading) {
       _isLoading = true;
@@ -48,7 +46,6 @@ class MonitoringProvider extends ChangeNotifier {
     }
   }
 
-  // ── Auto Refresh ──────────────────────────────────────────────────
   void startAutoRefresh({Duration interval = const Duration(seconds: 5)}) {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(interval, (_) => fetchActivities(showLoading: false));
@@ -59,7 +56,6 @@ class MonitoringProvider extends ChangeNotifier {
     _refreshTimer = null;
   }
 
-  // ── Simulate live activity (for demo) ─────────────────────────────
   void startSimulation() {
     _simulationTimer?.cancel();
     final extraActivities = [

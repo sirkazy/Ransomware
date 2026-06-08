@@ -12,7 +12,6 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.background,
 
-      // ── Color Scheme ─────────────────────────────────────────────
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.primaryDim,
@@ -24,7 +23,6 @@ class AppTheme {
         onError: Colors.white,
       ),
 
-      // ── Typography ───────────────────────────────────────────────
       textTheme: GoogleFonts.interTextTheme(
         const TextTheme(
           displayLarge: TextStyle(
@@ -93,7 +91,6 @@ class AppTheme {
         ),
       ),
 
-      // ── App Bar ──────────────────────────────────────────────────
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -108,7 +105,6 @@ class AppTheme {
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
 
-      // ── Cards ────────────────────────────────────────────────────
       cardTheme: CardTheme(
         color: AppColors.surface,
         elevation: 0,
@@ -122,7 +118,6 @@ class AppTheme {
         margin: EdgeInsets.zero,
       ),
 
-      // ── Bottom Navigation ────────────────────────────────────────
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.primary,
@@ -139,7 +134,6 @@ class AppTheme {
         ),
       ),
 
-      // ── Elevated Buttons ─────────────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -156,7 +150,6 @@ class AppTheme {
         ),
       ),
 
-      // ── Outlined Buttons ─────────────────────────────────────────
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
@@ -172,7 +165,6 @@ class AppTheme {
         ),
       ),
 
-      // ── Chips ────────────────────────────────────────────────────
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceLight,
         selectedColor: AppColors.primaryGlow,
@@ -188,14 +180,12 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       ),
 
-      // ── Divider ──────────────────────────────────────────────────
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
         thickness: 1,
         space: 1,
       ),
 
-      // ── Snackbar ─────────────────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.surfaceLight,
         contentTextStyle: GoogleFonts.inter(

@@ -5,7 +5,6 @@ import '../models/system_status.dart';
 class MockData {
   MockData._();
 
-  // ── System Status ─────────────────────────────────────────────────
   static SystemStatus get systemStatus => const SystemStatus(
         isSecure: true,
         threatsDetected: 3,
@@ -15,7 +14,6 @@ class MockData {
         threatActivityData: [1, 0, 2, 1, 0, 3, 1, 0, 1, 2, 0, 1],
       );
 
-  // ── Alerts ────────────────────────────────────────────────────────
   static List<AlertModel> get alerts => [
         AlertModel(
           id: 'ALT-001',
@@ -129,7 +127,6 @@ class MockData {
         ),
       ];
 
-  // ── Monitoring Activities ─────────────────────────────────────────
   static List<MonitoringActivity> get monitoringActivities => [
         MonitoringActivity(
           id: 'MON-001',

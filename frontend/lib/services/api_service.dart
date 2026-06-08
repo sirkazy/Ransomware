@@ -7,9 +7,6 @@ import '../constants/mock_data.dart';
 class ApiService {
   late final Dio _dio;
 
-  // Change this to your Flask backend URL when ready.
-  // For Android emulator use: http://10.0.2.2:5000/api
-  // For physical device use your machine's local IP.
   static const String _baseUrl = 'http://10.0.2.2:5000/api';
 
   ApiService() {
@@ -26,18 +23,15 @@ class ApiService {
     );
   }
 
-  // ── GET /status ───────────────────────────────────────────────────
   Future<SystemStatus> getStatus() async {
     try {
       final response = await _dio.get('/status');
       return SystemStatus.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
-      // Fallback to mock data when backend is unavailable
       return MockData.systemStatus;
     }
   }
 
-  // ── GET /alerts ───────────────────────────────────────────────────
   Future<List<AlertModel>> getAlerts() async {
     try {
       final response = await _dio.get('/alerts');
@@ -46,12 +40,10 @@ class ApiService {
           .map((json) => AlertModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      // Fallback to mock data when backend is unavailable
       return MockData.alerts;
     }
   }
 
-  // ── GET /monitoring ───────────────────────────────────────────────
   Future<List<MonitoringActivity>> getMonitoring() async {
     try {
       final response = await _dio.get('/monitoring');
@@ -61,7 +53,6 @@ class ApiService {
               MonitoringActivity.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      // Fallback to mock data when backend is unavailable
       return MockData.monitoringActivities;
     }
   }

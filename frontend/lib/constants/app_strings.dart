@@ -1,16 +1,13 @@
 class AppStrings {
   AppStrings._();
 
-  // ── App ────────────────────────────────────────────────────────────
   static const String appName = 'Ransomware Guardian';
   static const String appSubtitle = 'Real-Time Threat Detection';
 
-  // ── Navigation ─────────────────────────────────────────────────────
   static const String dashboard = 'Dashboard';
   static const String monitoring = 'Monitoring';
   static const String alerts = 'Alerts';
 
-  // ── Dashboard ──────────────────────────────────────────────────────
   static const String systemStatus = 'System Status';
   static const String secure = 'Secure';
   static const String threatDetected = 'Threat Detected';
@@ -22,19 +19,16 @@ class AppStrings {
   static const String recentAlerts = 'Recent Alerts';
   static const String viewAll = 'View All';
 
-  // ── Monitoring ─────────────────────────────────────────────────────
   static const String liveMonitoring = 'Live Monitoring';
   static const String monitoringActive = 'Monitoring Active';
   static const String fileActivity = 'File Activity';
 
-  // ── Alerts ─────────────────────────────────────────────────────────
   static const String allAlerts = 'All';
   static const String critical = 'Critical';
   static const String warning = 'Warning';
   static const String safe = 'Safe';
   static const String noAlerts = 'No alerts found';
 
-  // ── Alert Details ──────────────────────────────────────────────────
   static const String alertDetails = 'Alert Details';
   static const String detectionReason = 'Detection Reason';
   static const String timeDetected = 'Time Detected';
@@ -44,7 +38,6 @@ class AppStrings {
   static const String quarantine = 'Quarantine';
   static const String stopProcess = 'Stop Process';
 
-  // ── Status Chips ───────────────────────────────────────────────────
   static const String normal = 'Normal';
   static const String suspicious = 'Suspicious';
   static const String blocked = 'Blocked';

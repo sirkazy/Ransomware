@@ -36,29 +36,23 @@ class AlertDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // Threat header
           _buildHeader(context, alert, severityColor),
           const SizedBox(height: 20),
 
-          // Detection reason
           _buildInfoCard(context, AppStrings.detectionReason, alert.detectionReason, Icons.search_rounded, AppColors.primary),
           const SizedBox(height: 12),
 
-          // Time detected
           _buildInfoCard(context, AppStrings.timeDetected, _formatFullTime(alert.timestamp), Icons.access_time_rounded, AppColors.textSecondary),
           const SizedBox(height: 12),
 
-          // Affected files
           if (alert.affectedFiles.isNotEmpty) ...[
             _buildFilesCard(context, alert.affectedFiles),
             const SizedBox(height: 12),
           ],
 
-          // Suggested action
           _buildInfoCard(context, AppStrings.suggestedAction, alert.suggestedAction, Icons.lightbulb_outline_rounded, AppColors.severityWarning),
           const SizedBox(height: 28),
 
-          // Action buttons
           _buildActionButtons(context),
           const SizedBox(height: 20),
         ],

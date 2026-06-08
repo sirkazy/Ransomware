@@ -42,7 +42,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: Text(
@@ -52,7 +51,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Filter chips
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SingleChildScrollView(
@@ -95,7 +93,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Alert list
                 Expanded(
                   child: alertsProvider.isLoading
                       ? const Center(child: CircularProgressIndicator(color: AppColors.primary))

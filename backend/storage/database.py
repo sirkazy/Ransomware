@@ -15,7 +15,6 @@ from utils.logger import get_logger
 
 logger = get_logger("database")
 
-# Thread-local storage for SQLite connections (SQLite is not thread-safe)
 _local = threading.local()
 
 
@@ -34,7 +33,6 @@ def init_db():
     conn = _get_connection()
     cursor = conn.cursor()
 
-    # ── Monitoring Events Table ────────────────────────────────────
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS monitoring_events (
             id          TEXT PRIMARY KEY,
@@ -47,7 +45,6 @@ def init_db():
         )
     """)
 
-    # ── Alerts Table ───────────────────────────────────────────────
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS alerts (
             id                TEXT PRIMARY KEY,
@@ -61,7 +58,6 @@ def init_db():
         )
     """)
 
-    # ── Indexes ────────────────────────────────────────────────────
     cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_events_timestamp
         ON monitoring_events(timestamp DESC)
@@ -79,9 +75,6 @@ def init_db():
     logger.info("Database initialized successfully")
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# Monitoring Events
-# ═══════════════════════════════════════════════════════════════════════
 
 def add_event(event_type, file_path, status="normal", action="File Modified",
               details=""):
@@ -98,7 +91,6 @@ def add_event(event_type, file_path, status="normal", action="File Modified",
     )
     conn.commit()
 
-    # Also write to JSON log
     _append_json_log({
         "id": event_id,
         "event_type": event_type,
@@ -157,9 +149,6 @@ def clear_events():
     logger.info("All monitoring events cleared")
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# Alerts
-# ═══════════════════════════════════════════════════════════════════════
 
 def add_alert(alert_id, title, description, severity, detection_reason,
               affected_files, suggested_action):
@@ -178,7 +167,6 @@ def add_alert(alert_id, title, description, severity, detection_reason,
     )
     conn.commit()
 
-    # Also write to alerts JSON
     _append_json_alert({
         "id": alert_id,
         "title": title,
@@ -268,9 +256,6 @@ def clear_alerts():
     logger.info("All alerts cleared")
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# System Status (aggregated)
-# ═══════════════════════════════════════════════════════════════════════
 
 def get_system_status():
     """
@@ -278,23 +263,19 @@ def get_system_status():
     """
     conn = _get_connection()
 
-    # Total threats (warning + critical alerts)
     cursor = conn.execute(
         "SELECT COUNT(*) as cnt FROM alerts WHERE severity IN ('warning', 'critical')"
     )
     threats_detected = cursor.fetchone()["cnt"]
 
-    # Total monitored events (proxy for "files monitored")
     cursor = conn.execute("SELECT COUNT(*) as cnt FROM monitoring_events")
     files_monitored = cursor.fetchone()["cnt"]
 
-    # Suspicious activities
     cursor = conn.execute(
         "SELECT COUNT(*) as cnt FROM monitoring_events WHERE status = 'suspicious'"
     )
     suspicious_activities = cursor.fetchone()["cnt"]
 
-    # Recent critical alerts → system not secure
     cursor = conn.execute(
         """SELECT COUNT(*) as cnt FROM alerts
            WHERE severity = 'critical'
@@ -304,7 +285,6 @@ def get_system_status():
     recent_critical = cursor.fetchone()["cnt"]
     is_secure = recent_critical == 0
 
-    # Threat activity data (events per hour for last 12 hours)
     threat_activity_data = []
     now = datetime.now()
     for i in range(11, -1, -1):
@@ -328,9 +308,6 @@ def get_system_status():
     }
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# JSON File Backup
-# ═══════════════════════════════════════════════════════════════════════
 
 _json_lock = threading.Lock()
 

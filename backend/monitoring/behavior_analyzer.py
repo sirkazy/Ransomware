@@ -48,11 +48,9 @@ class BehaviorAnalyzer:
         self.detection_callback = detection_callback
         self._running = False
 
-        # Sliding window of recent events
         self._events = deque()
         self._lock = threading.Lock()
 
-        # Counters within current window
         self._modification_count = 0
         self._rename_count = 0
         self._extension_changes = []
@@ -68,18 +66,15 @@ class BehaviorAnalyzer:
 
         while self._running:
             try:
-                # Block for up to 1 second waiting for events
                 if not self.event_queue.empty():
                     event = self.event_queue.get(timeout=1)
                     result = self.analyze_event(event)
 
-                    # If analysis found something suspicious, notify
                     if result.score > 0 and self.detection_callback:
                         self.detection_callback(event, result)
                 else:
                     time.sleep(0.5)
 
-                # Periodically clean old events from the window
                 self._cleanup_window()
 
             except Exception as e:
@@ -99,7 +94,6 @@ class BehaviorAnalyzer:
         extension = event.get("extension", "")
         now = datetime.now()
 
-        # Track in sliding window
         with self._lock:
             self._events.append({"event": event, "time": now})
             self._affected_files.add(file_path)
@@ -109,7 +103,6 @@ class BehaviorAnalyzer:
         action = self._event_to_action(event_type)
         status = EventStatus.NORMAL
 
-        # ── Rule 1: Rapid File Modifications ───────────────────────
         if event_type == EventType.MODIFIED:
             self._modification_count += 1
             window_count = self._count_events_in_window(EventType.MODIFIED)
@@ -124,7 +117,6 @@ class BehaviorAnalyzer:
                 action = ActionType.RAPID_MODIFICATION
                 status = EventStatus.SUSPICIOUS
 
-        # ── Rule 2: Suspicious Extension Changes ──────────────────
         if event_type == EventType.RENAMED and dest_path:
             self._rename_count += 1
             new_ext = get_file_extension(dest_path)
@@ -139,7 +131,6 @@ class BehaviorAnalyzer:
                 action = ActionType.ENCRYPTION_DETECTED
                 status = EventStatus.BLOCKED
 
-        # ── Rule 3: Bulk Rename Detection ─────────────────────────
         if event_type == EventType.RENAMED:
             rename_count = self._count_events_in_window(EventType.RENAMED)
             if rename_count > config.RENAME_THRESHOLD:
@@ -151,7 +142,6 @@ class BehaviorAnalyzer:
                 action = ActionType.BULK_RENAME
                 status = EventStatus.SUSPICIOUS
 
-        # ── Rule 4: Extension Change Without Rename ───────────────
         extension_change_count = len(self._extension_changes)
         if extension_change_count > config.EXTENSION_CHANGE_THRESHOLD:
             score += 40
@@ -160,7 +150,6 @@ class BehaviorAnalyzer:
                 f"{extension_change_count} suspicious extension changes"
             )
 
-        # ── Determine Overall Threat Level ────────────────────────
         if score >= 70:
             threat_level = ThreatLevel.CRITICAL
         elif score >= 30:
@@ -204,7 +193,6 @@ class BehaviorAnalyzer:
             while self._events and self._events[0]["time"] < cutoff:
                 self._events.popleft()
 
-            # Also trim extension changes list
             self._extension_changes = self._extension_changes[-50:]
 
     def _event_to_action(self, event_type):

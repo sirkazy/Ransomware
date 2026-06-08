@@ -6,7 +6,6 @@ Verifies safe file creation, modification, and cleanup.
 import os
 import sys
 
-# Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
@@ -14,7 +13,6 @@ import pytest
 import config
 from simulation.simulator import RansomwareSimulator
 
-# Use a separate test directory
 TEST_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "sim_test_files"
 )
@@ -24,14 +22,13 @@ TEST_DIR = os.path.join(
 def simulator():
     """Create a simulator with a test-specific directory."""
     config.TEST_FILES_DIR = TEST_DIR
-    config.SIMULATION_FILE_COUNT = 10  # Fewer files for faster tests
-    config.SIMULATION_DELAY = 0.01     # Faster for tests
+    config.SIMULATION_FILE_COUNT = 10
+    config.SIMULATION_DELAY = 0.01
 
     sim = RansomwareSimulator()
     sim.test_dir = TEST_DIR
     yield sim
 
-    # Cleanup after tests
     sim.cleanup()
     if os.path.exists(TEST_DIR):
         for f in os.listdir(TEST_DIR):
@@ -78,7 +75,6 @@ class TestSimulatorModification:
         """Modified files should have additional content."""
         simulator.setup_test_files()
 
-        # Read original content
         original = {}
         for filepath in simulator.created_files[:3]:
             with open(filepath, "r") as f:
@@ -86,7 +82,6 @@ class TestSimulatorModification:
 
         simulator.simulate_rapid_modifications()
 
-        # Verify content changed
         for filepath, orig_content in original.items():
             with open(filepath, "r") as f:
                 new_content = f.read()
@@ -123,7 +118,6 @@ class TestSimulatorCleanup:
         simulator.simulate_extension_changes()
         simulator.cleanup()
 
-        # The directory may still exist but should be empty or nearly empty
         remaining = os.listdir(TEST_DIR) if os.path.exists(TEST_DIR) else []
         assert len(remaining) == 0
 
@@ -140,11 +134,9 @@ class TestSimulatorCleanup:
         """Simulator should never create files outside test_files."""
         simulator.run_simulation()
 
-        # Verify no files were created in parent directories
         parent = os.path.dirname(TEST_DIR)
         for item in os.listdir(parent):
             item_path = os.path.join(parent, item)
             if item_path == TEST_DIR:
                 continue
-            # No new files should exist with simulation-related names
             assert "document_" not in item

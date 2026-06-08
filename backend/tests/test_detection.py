@@ -6,7 +6,6 @@ Verifies that detection rules correctly classify behavior patterns.
 import os
 import sys
 
-# Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
@@ -132,7 +131,6 @@ class TestDetectionEngine:
             "dest_path": "/home/user/test.txt.locked",
             "extension": ".txt",
         }
-        # This reason triggers both bulk rename AND suspicious extension
         result = AnalysisResult(
             score=90,
             threat_level=ThreatLevel.CRITICAL,

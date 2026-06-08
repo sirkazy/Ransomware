@@ -2,7 +2,7 @@ class AlertModel {
   final String id;
   final String title;
   final String description;
-  final String severity; // critical, warning, safe
+  final String severity;
   final DateTime timestamp;
   final String detectionReason;
   final List<String> affectedFiles;

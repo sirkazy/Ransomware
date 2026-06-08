@@ -16,7 +16,6 @@ from utils.logger import get_logger
 
 logger = get_logger("routes")
 
-# The simulator reference is set by app.py after initialization
 _simulator = None
 
 
@@ -29,9 +28,6 @@ def set_simulator(simulator):
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# GET /api/status
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.route("/status", methods=["GET"])
 def status():
     """Return current system monitoring status."""
@@ -39,9 +35,6 @@ def status():
     return jsonify(data), status_code
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# GET /api/alerts
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.route("/alerts", methods=["GET"])
 def alerts():
     """Return all threat alerts."""
@@ -49,9 +42,6 @@ def alerts():
     return jsonify(data), status_code
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# GET /api/monitoring
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.route("/monitoring", methods=["GET"])
 def monitoring():
     """Return recent monitoring events."""
@@ -59,9 +49,6 @@ def monitoring():
     return jsonify(data), status_code
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# POST /api/simulate
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.route("/simulate", methods=["POST"])
 def simulate():
     """Trigger a ransomware simulation for testing."""
@@ -69,9 +56,6 @@ def simulate():
     return jsonify(data), status_code
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# POST /api/alerts/<id>/action
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.route("/alerts/<alert_id>/action", methods=["POST"])
 def alert_action(alert_id):
     """Execute an action on a specific alert."""
@@ -81,9 +65,6 @@ def alert_action(alert_id):
     return jsonify(data), status_code
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# Error Handlers
-# ═══════════════════════════════════════════════════════════════════════
 @api_bp.errorhandler(404)
 def not_found(error):
     return jsonify({"error": "Endpoint not found"}), 404

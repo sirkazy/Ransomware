@@ -2,7 +2,7 @@ class MonitoringActivity {
   final String id;
   final String action;
   final String filePath;
-  final String status; // normal, suspicious, blocked
+  final String status;
   final DateTime timestamp;
 
   const MonitoringActivity({

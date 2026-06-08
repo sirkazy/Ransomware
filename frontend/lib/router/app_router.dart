@@ -14,17 +14,14 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/splash',
   routes: [
-    // ── Splash ─────────────────────────────────────────────────────
     GoRoute(
       path: '/splash',
       builder: (context, state) => const SplashScreen(),
     ),
 
-    // ── Main Shell (Bottom Nav) ────────────────────────────────────
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) {
-        // Determine current tab index from location
         int index = 0;
         final location = state.uri.toString();
         if (location.startsWith('/monitoring')) {
@@ -73,7 +70,6 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
 
-    // ── Alert Details (outside shell for full-screen) ──────────────
     GoRoute(
       path: '/alert/:id',
       parentNavigatorKey: _rootNavigatorKey,

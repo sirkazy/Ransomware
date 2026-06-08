@@ -7,7 +7,6 @@ import json
 import os
 import sys
 
-# Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
@@ -15,7 +14,6 @@ import pytest
 import config
 from storage.database import init_db, add_alert, add_event, clear_alerts, clear_events
 
-# Override DB path for tests
 config.DB_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "test_guardian.db"
 )
@@ -28,7 +26,6 @@ def setup_db():
     clear_alerts()
     clear_events()
     yield
-    # Cleanup
     if os.path.exists(config.DB_PATH):
         os.remove(config.DB_PATH)
 

@@ -13,7 +13,6 @@ class AlertsProvider extends ChangeNotifier {
 
   AlertsProvider(this._apiService);
 
-  // ── Getters ───────────────────────────────────────────────────────
   List<AlertModel> get alerts => _filteredAlerts;
   List<AlertModel> get allAlerts => _alerts;
   bool get isLoading => _isLoading;
@@ -34,7 +33,6 @@ class AlertsProvider extends ChangeNotifier {
 
   Timer? _refreshTimer;
 
-  // ── Fetch Alerts ──────────────────────────────────────────────────
   Future<void> fetchAlerts({bool showLoading = true}) async {
     if (showLoading) {
       _isLoading = true;
@@ -44,7 +42,6 @@ class AlertsProvider extends ChangeNotifier {
 
     try {
       final newAlerts = await _apiService.getAlerts();
-      // Sort by timestamp, newest first
       newAlerts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       _alerts = newAlerts;
     } catch (e) {
@@ -57,7 +54,6 @@ class AlertsProvider extends ChangeNotifier {
     }
   }
 
-  // ── Auto Refresh ──────────────────────────────────────────────────
   void startAutoRefresh({Duration interval = const Duration(seconds: 5)}) {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(interval, (_) => fetchAlerts(showLoading: false));
@@ -68,13 +64,11 @@ class AlertsProvider extends ChangeNotifier {
     _refreshTimer = null;
   }
 
-  // ── Filter ────────────────────────────────────────────────────────
   void setFilter(String filter) {
     _selectedFilter = filter;
     notifyListeners();
   }
 
-  // ── Find alert by ID ─────────────────────────────────────────────
   AlertModel? getAlertById(String id) {
     try {
       return _alerts.firstWhere((a) => a.id == id);

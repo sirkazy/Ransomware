@@ -19,24 +19,20 @@ def setup_logger(name="guardian"):
     """
     logger = logging.getLogger(name)
 
-    # Prevent duplicate handlers on repeated calls
     if logger.handlers:
         return logger
 
     logger.setLevel(getattr(logging, config.LOG_LEVEL, logging.INFO))
 
-    # ── Log Format ─────────────────────────────────────────────────
     fmt = "[%(asctime)s] [%(levelname)-8s] [%(name)-20s] %(message)s"
     date_fmt = "%Y-%m-%d %H:%M:%S"
     formatter = logging.Formatter(fmt, datefmt=date_fmt)
 
-    # ── Console Handler ────────────────────────────────────────────
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # ── File Handler (Rotating) ────────────────────────────────────
     os.makedirs(config.LOGS_DIR, exist_ok=True)
     file_handler = RotatingFileHandler(
         config.LOG_FILE,

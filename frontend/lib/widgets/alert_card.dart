@@ -28,7 +28,6 @@ class AlertCard extends StatelessWidget {
         child: IntrinsicHeight(
           child: Row(
             children: [
-              // Severity stripe
               Container(
                 width: 4,
                 decoration: BoxDecoration(
@@ -39,7 +38,6 @@ class AlertCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Content
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16),

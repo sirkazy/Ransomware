@@ -46,7 +46,6 @@ class DetectionEngine:
     def _build_rules(self):
         """Define all detection rules."""
         return [
-            # ── Rule 1: Mass File Modification ────────────────────
             DetectionRule(
                 name="mass_modification",
                 condition_fn=lambda e, r: (
@@ -62,7 +61,6 @@ class DetectionEngine:
                 ),
             ),
 
-            # ── Rule 2: Ransomware Extension Change ───────────────
             DetectionRule(
                 name="ransomware_extension",
                 condition_fn=lambda e, r: (
@@ -78,7 +76,6 @@ class DetectionEngine:
                 ),
             ),
 
-            # ── Rule 3: Bulk Rename Attack ────────────────────────
             DetectionRule(
                 name="bulk_rename",
                 condition_fn=lambda e, r: (
@@ -94,7 +91,6 @@ class DetectionEngine:
                 ),
             ),
 
-            # ── Rule 4: Multiple Extension Changes ────────────────
             DetectionRule(
                 name="extension_flood",
                 condition_fn=lambda e, r: (
@@ -133,7 +129,6 @@ class DetectionEngine:
         if not triggered_results:
             return None
 
-        # Pick the highest severity result
         severity_order = {
             ThreatLevel.SAFE: 0,
             ThreatLevel.WARNING: 1,
@@ -145,7 +140,6 @@ class DetectionEngine:
         )
         best = triggered_results[0]
 
-        # Build alert descriptor
         alert = {
             "id": generate_alert_id(),
             "title": best["title"],

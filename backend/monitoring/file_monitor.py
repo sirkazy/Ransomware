@@ -41,7 +41,6 @@ class FileEventHandler(FileSystemEventHandler):
         if self._should_ignore(src_path):
             return
 
-        # Skip directory events — we only care about files
         event_data = {
             "event_type": event_type,
             "file_path": src_path,
@@ -90,7 +89,6 @@ class FileMonitor:
         logger.info("Starting file monitoring...")
 
         for directory in config.MONITORED_DIRECTORIES:
-            # Create directory if it doesn't exist (especially test_files)
             os.makedirs(directory, exist_ok=True)
 
             if not os.path.isdir(directory):

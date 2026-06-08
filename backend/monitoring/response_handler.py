@@ -14,10 +14,8 @@ from utils.logger import get_logger
 
 logger = get_logger("response_handler")
 
-# Debounce: minimum seconds between alerts of the same type
 ALERT_COOLDOWN_SECONDS = 30
 
-# Throttle: minimum seconds between normal event logs
 NORMAL_EVENT_THROTTLE = 1.0
 
 
@@ -32,7 +30,6 @@ class ResponseHandler:
 
     def __init__(self, detection_engine):
         self.detection_engine = detection_engine
-        # Track last alert time per alert title to debounce
         self._last_alert_time = {}
         self._last_normal_log_time = 0
 
@@ -41,7 +38,6 @@ class ResponseHandler:
         Called by the BehaviorAnalyzer when suspicious activity is found.
         Runs the detection engine and executes the response.
         """
-        # ── Step 1: Log the monitoring event ──────────────────────
         try:
             add_event(
                 event_type=event["event_type"],
@@ -53,18 +49,15 @@ class ResponseHandler:
         except Exception as e:
             logger.error("Failed to log event: %s", e)
 
-        # ── Step 2: Run detection engine ──────────────────────────
         alert = self.detection_engine.evaluate(event, analysis_result)
 
         if alert is None:
-            # Suspicious but didn't trigger a full alert
             logger.info(
                 "Suspicious activity noted but no alert rule triggered "
                 "(score=%d)", analysis_result.score,
             )
             return None
 
-        # ── Step 2.5: Debounce alerts ─────────────────────────────
         now = time.time()
         title = alert["title"]
         if title in self._last_alert_time:
@@ -75,7 +68,6 @@ class ResponseHandler:
 
         self._last_alert_time[title] = now
 
-        # ── Step 3: Store alert ───────────────────────────────────
         try:
             add_alert(
                 alert_id=alert["id"],
@@ -89,7 +81,6 @@ class ResponseHandler:
         except Exception as e:
             logger.error("Failed to store alert: %s", e)
 
-        # ── Step 4: Log response ──────────────────────────────────
         logger.warning(
             "🚨 ALERT %s [%s]: %s — %d files affected",
             alert["id"],
@@ -107,7 +98,7 @@ class ResponseHandler:
         """
         now = time.time()
         if now - self._last_normal_log_time < NORMAL_EVENT_THROTTLE:
-            return  # Throttle normal event logging
+            return
         self._last_normal_log_time = now
 
         try:
@@ -174,7 +165,6 @@ class ResponseHandler:
             proc = psutil.Process(pid)
             proc_name = proc.name()
 
-            # Safety: only terminate known simulation/test processes
             safe_names = ["python", "python3", "simulator"]
             if any(safe in proc_name.lower() for safe in safe_names):
                 proc.terminate()

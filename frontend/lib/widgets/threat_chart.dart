@@ -150,7 +150,6 @@ class ThreatChart extends StatelessWidget {
                       show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         if (spot.y > 1) {
-                          // Highlight spikes with red dots
                           return FlDotCirclePainter(
                             radius: 4,
                             color: AppColors.chartDot,

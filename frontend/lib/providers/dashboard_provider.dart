@@ -13,7 +13,6 @@ class DashboardProvider extends ChangeNotifier {
 
   DashboardProvider(this._apiService);
 
-  // ── Getters ───────────────────────────────────────────────────────
   SystemStatus? get status => _status;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -25,7 +24,6 @@ class DashboardProvider extends ChangeNotifier {
   bool get isMonitoringActive => _status?.isMonitoringActive ?? false;
   List<double> get threatActivityData => _status?.threatActivityData ?? [];
 
-  // ── Fetch Status ──────────────────────────────────────────────────
   Future<void> fetchStatus({bool showLoading = true}) async {
     if (showLoading) {
       _isLoading = true;
@@ -45,7 +43,6 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ── Auto Refresh (simulates real-time feel) ───────────────────────
   void startAutoRefresh({Duration interval = const Duration(seconds: 5)}) {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(interval, (_) => fetchStatus(showLoading: false));

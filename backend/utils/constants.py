@@ -41,7 +41,6 @@ class ActionType:
     FILE_SCANNED = "File Scanned"
 
 
-# Mapping from watchdog event types to our event types
 WATCHDOG_EVENT_MAP = {
     "created": EventType.CREATED,
     "modified": EventType.MODIFIED,
@@ -49,7 +48,6 @@ WATCHDOG_EVENT_MAP = {
     "moved": EventType.RENAMED,
 }
 
-# Suggested actions per threat level
 SUGGESTED_ACTIONS = {
     ThreatLevel.SAFE: (
         "No action required. System files are intact. "

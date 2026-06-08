@@ -22,7 +22,6 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Fade-in animation
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -38,7 +37,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Pulse animation for shield glow
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
@@ -53,7 +51,6 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeController.forward();
     _pulseController.repeat(reverse: true);
 
-    // Navigate to dashboard after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         context.go('/dashboard');
@@ -80,7 +77,6 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Shield icon with pulsing glow
                 AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, child) {
@@ -118,7 +114,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 40),
 
-                // App name
                 Text(
                   AppStrings.appName,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
@@ -128,7 +123,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
 
-                // Subtitle
                 Text(
                   AppStrings.appSubtitle,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -139,7 +133,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 48),
 
-                // Loading indicator
                 SizedBox(
                   width: 160,
                   child: ClipRRect(

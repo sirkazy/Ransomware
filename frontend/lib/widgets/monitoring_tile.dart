@@ -24,7 +24,6 @@ class MonitoringTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // File icon
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -38,7 +37,6 @@ class MonitoringTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          // Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +63,6 @@ class MonitoringTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          // Status chip & time
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

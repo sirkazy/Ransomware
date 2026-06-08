@@ -16,7 +16,6 @@ from utils.logger import get_logger
 
 logger = get_logger("simulator")
 
-# Sample file content for dummy files
 SAMPLE_CONTENTS = [
     "Quarterly financial report for Q4 2025.\nRevenue: $1.2M\n",
     "Meeting notes from team standup.\nAction items: review PR, deploy.\n",
@@ -45,7 +44,7 @@ class RansomwareSimulator:
     def __init__(self):
         self.test_dir = config.TEST_FILES_DIR
         self.created_files = []
-        self.renamed_files = {}  # original_path -> new_path
+        self.renamed_files = {}
 
     def setup_test_files(self):
         """Create dummy files for simulation."""
@@ -96,9 +95,9 @@ class RansomwareSimulator:
         This is the strongest ransomware behavior indicator.
         """
         renamed_count = 0
-        suspicious_exts = config.SUSPICIOUS_EXTENSIONS[:3]  # Use first 3
+        suspicious_exts = config.SUSPICIOUS_EXTENSIONS[:3]
 
-        for filepath in self.created_files[:20]:  # Rename first 20 files
+        for filepath in self.created_files[:20]:
             if not os.path.exists(filepath):
                 continue
             try:
@@ -131,21 +130,16 @@ class RansomwareSimulator:
         logger.info("🧪 Starting ransomware simulation...")
         logger.info("=" * 50)
 
-        # Step 1: Create files
         files_created = self.setup_test_files()
         time.sleep(1)
 
-        # Step 2: Rapid modifications
         files_modified = self.simulate_rapid_modifications()
         time.sleep(1)
 
-        # Step 3: Extension changes
         files_renamed = self.simulate_extension_changes()
 
-        # Step 4: Wait for detection engine to process
         time.sleep(2)
 
-        # Step 5: Cleanup
         self.cleanup()
 
         result = {
@@ -167,7 +161,6 @@ class RansomwareSimulator:
         """
         cleaned = 0
 
-        # Remove renamed files
         for original, renamed in self.renamed_files.items():
             try:
                 if os.path.exists(renamed):
@@ -176,7 +169,6 @@ class RansomwareSimulator:
             except OSError:
                 pass
 
-        # Remove remaining original files
         for filepath in self.created_files:
             try:
                 if os.path.exists(filepath):

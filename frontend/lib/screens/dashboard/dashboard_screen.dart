@@ -37,7 +37,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       ),
     );
 
-    // Fetch data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DashboardProvider>().fetchStatus();
       context.read<AlertsProvider>().fetchAlerts();
@@ -73,7 +72,6 @@ class _DashboardScreenState extends State<DashboardScreen>
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
-                  // ── Header ────────────────────────────────────────
                   Row(
                     children: [
                       Column(
@@ -118,11 +116,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 24),
 
-                  // ── Shield Status Hero ────────────────────────────
                   _buildShieldHero(context, dashboard),
                   const SizedBox(height: 20),
 
-                  // ── Statistics Grid ───────────────────────────────
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -159,12 +155,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 20),
 
-                  // ── Threat Activity Chart ─────────────────────────
                   if (dashboard.threatActivityData.isNotEmpty)
                     ThreatChart(data: dashboard.threatActivityData),
                   const SizedBox(height: 20),
 
-                  // ── Recent Alerts ─────────────────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -189,7 +183,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 8),
 
-                  // Show last 3 alerts
                   ...alerts.allAlerts.take(3).map(
                         (alert) => AlertCard(
                           alert: alert,
@@ -237,7 +230,6 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           child: Column(
             children: [
-              // Glowing shield icon
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -275,7 +267,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                     ),
               ),
               const SizedBox(height: 12),
-              // Status indicator
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

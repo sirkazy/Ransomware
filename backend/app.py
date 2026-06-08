@@ -27,7 +27,6 @@ from storage.database import init_db, add_event
 from utils.constants import EventStatus
 from utils.logger import setup_logger, get_logger
 
-# Initialize root logger
 setup_logger()
 logger = get_logger("app")
 
@@ -63,16 +62,12 @@ def start_monitoring():
 
     Returns all component references for graceful shutdown.
     """
-    # Event queue: FileMonitor pushes events, BehaviorAnalyzer consumes
     event_queue = Queue()
 
-    # Detection engine (rules)
     detection_engine = DetectionEngine()
 
-    # Response handler (alert generation, storage)
     response_handler = ResponseHandler(detection_engine)
 
-    # Behavior analyzer (pattern detection)
     def on_detection(event, analysis_result):
         """Callback when analyzer detects suspicious behavior."""
         response_handler.handle(event, analysis_result)
@@ -86,7 +81,6 @@ def start_monitoring():
         detection_callback=on_detection,
     )
 
-    # Override the analyzer loop to also log normal events
     original_loop = analyzer.process_loop
 
     def enhanced_loop():
@@ -115,10 +109,8 @@ def start_monitoring():
                 import time
                 time.sleep(1)
 
-    # File monitor (watchdog)
     file_monitor = FileMonitor(event_queue)
 
-    # Start monitoring in background thread
     monitor_thread = threading.Thread(
         target=file_monitor.start,
         name="FileMonitor",
@@ -126,7 +118,6 @@ def start_monitoring():
     )
     monitor_thread.start()
 
-    # Start analyzer in background thread
     analyzer_thread = threading.Thread(
         target=enhanced_loop,
         name="BehaviorAnalyzer",
@@ -151,25 +142,20 @@ def main():
     logger.info("  Ransomware Guardian — Starting Up")
     logger.info("=" * 60)
 
-    # ── Step 1: Create required directories ───────────────────────
     os.makedirs(config.STORAGE_DIR, exist_ok=True)
     os.makedirs(config.LOGS_DIR, exist_ok=True)
     os.makedirs(config.TEST_FILES_DIR, exist_ok=True)
 
-    # ── Step 2: Initialize database ──────────────────────────────
     init_db()
     logger.info("Database initialized")
 
-    # ── Step 3: Start monitoring pipeline ────────────────────────
     components = start_monitoring()
     logger.info("Monitoring pipeline active")
 
-    # ── Step 4: Initialize simulator ─────────────────────────────
     simulator = RansomwareSimulator()
     set_simulator(simulator)
     logger.info("Simulator ready")
 
-    # ── Step 5: Setup graceful shutdown ──────────────────────────
     def shutdown(signum, frame):
         logger.info("Shutting down gracefully...")
         components["file_monitor"].stop()
@@ -180,7 +166,6 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
-    # ── Step 6: Start Flask API ──────────────────────────────────
     app = create_app()
 
     logger.info("=" * 60)
@@ -192,7 +177,7 @@ def main():
     app.run(
         host=config.API_HOST,
         port=config.API_PORT,
-        debug=False,  # Debug=False because we manage threads ourselves
+        debug=False,
         use_reloader=False,
     )
 
