@@ -11,18 +11,26 @@ from api.controllers import (
     get_monitoring_data,
     trigger_simulation,
     handle_alert_action,
+    reset_system_data,
 )
 from utils.logger import get_logger
 
 logger = get_logger("routes")
 
 _simulator = None
+_analyzer = None
 
 
 def set_simulator(simulator):
     """Set the simulator reference for the /simulate endpoint."""
     global _simulator
     _simulator = simulator
+
+
+def set_analyzer(analyzer):
+    """Set the analyzer reference so reset can clear in-memory state."""
+    global _analyzer
+    _analyzer = analyzer
 
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
@@ -51,8 +59,26 @@ def monitoring():
 
 @api_bp.route("/simulate", methods=["POST"])
 def simulate():
-    """Trigger a ransomware simulation for testing."""
-    data, status_code = trigger_simulation(_simulator)
+    """
+    Trigger a ransomware simulation scenario.
+    Optional body: { "type": "rapid_modification" | "bulk_rename" | "mass_extension" | "all" }
+    Defaults to "all" if no type is provided.
+    """
+    body = request.get_json(silent=True) or {}
+    sim_type = body.get("type", "all")
+
+    valid_types = {"rapid_modification", "bulk_rename", "mass_extension", "all"}
+    if sim_type not in valid_types:
+        return jsonify({"error": f"Invalid simulation type '{sim_type}'. Use one of: {sorted(valid_types)}"}), 400
+
+    data, status_code = trigger_simulation(_simulator, sim_type)
+    return jsonify(data), status_code
+
+
+@api_bp.route("/reset", methods=["POST"])
+def reset():
+    """Reset all alerts and monitoring events back to a clean secure state."""
+    data, status_code = reset_system_data(_analyzer)
     return jsonify(data), status_code
 
 

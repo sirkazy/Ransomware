@@ -17,7 +17,7 @@ from flask import Flask
 from flask_cors import CORS
 
 import config
-from api.routes import api_bp, set_simulator
+from api.routes import api_bp, set_simulator, set_analyzer
 from monitoring.behavior_analyzer import BehaviorAnalyzer
 from monitoring.detection_engine import DetectionEngine
 from monitoring.file_monitor import FileMonitor

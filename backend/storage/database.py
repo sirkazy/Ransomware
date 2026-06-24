@@ -75,7 +75,6 @@ def init_db():
     logger.info("Database initialized successfully")
 
 
-
 def add_event(event_type, file_path, status="normal", action="File Modified",
               details=""):
     """Insert a monitoring event into the database."""
@@ -147,7 +146,6 @@ def clear_events():
     conn.execute("DELETE FROM monitoring_events")
     conn.commit()
     logger.info("All monitoring events cleared")
-
 
 
 def add_alert(alert_id, title, description, severity, detection_reason,
@@ -256,6 +254,27 @@ def clear_alerts():
     logger.info("All alerts cleared")
 
 
+def reset_system():
+    """
+    Full system reset — wipes all alerts, events, and JSON log files.
+    Returns the system to a clean 'Secure' state.
+    """
+    conn = _get_connection()
+    conn.execute("DELETE FROM alerts")
+    conn.execute("DELETE FROM monitoring_events")
+    conn.commit()
+
+    # Wipe JSON backup files
+    for json_path in [config.ALERTS_JSON_PATH, config.LOGS_JSON_PATH]:
+        try:
+            if os.path.exists(json_path):
+                with open(json_path, "w") as f:
+                    json.dump([], f)
+        except IOError:
+            pass
+
+    logger.info("System reset — all alerts and events cleared")
+
 
 def get_system_status():
     """
@@ -278,12 +297,12 @@ def get_system_status():
 
     cursor = conn.execute(
         """SELECT COUNT(*) as cnt FROM alerts
-           WHERE severity = 'critical'
+           WHERE severity IN ('warning', 'critical')
            AND timestamp >= ?""",
         (format_timestamp(datetime.now() - timedelta(hours=1)),),
     )
-    recent_critical = cursor.fetchone()["cnt"]
-    is_secure = recent_critical == 0
+    recent_threats = cursor.fetchone()["cnt"]
+    is_secure = recent_threats == 0
 
     threat_activity_data = []
     now = datetime.now()
@@ -306,7 +325,6 @@ def get_system_status():
         "is_monitoring_active": True,
         "threat_activity_data": threat_activity_data,
     }
-
 
 
 _json_lock = threading.Lock()

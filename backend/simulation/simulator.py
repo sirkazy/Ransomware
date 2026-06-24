@@ -46,12 +46,15 @@ class RansomwareSimulator:
         self.created_files = []
         self.renamed_files = {}
 
-    def setup_test_files(self):
+    def setup_test_files(self, count=None):
         """Create dummy files for simulation."""
+        if count is None:
+            count = config.SIMULATION_FILE_COUNT
+
         os.makedirs(self.test_dir, exist_ok=True)
 
         self.created_files = []
-        for i in range(config.SIMULATION_FILE_COUNT):
+        for i in range(count):
             ext = random.choice(SAMPLE_EXTENSIONS)
             filename = f"document_{i:03d}{ext}"
             filepath = os.path.join(self.test_dir, filename)
@@ -89,7 +92,7 @@ class RansomwareSimulator:
         logger.info("Rapidly modified %d files", modified_count)
         return modified_count
 
-    def simulate_extension_changes(self):
+    def simulate_extension_changes(self, count=20):
         """
         Simulate renaming files to suspicious extensions.
         This is the strongest ransomware behavior indicator.
@@ -97,7 +100,7 @@ class RansomwareSimulator:
         renamed_count = 0
         suspicious_exts = config.SUSPICIOUS_EXTENSIONS[:3]
 
-        for filepath in self.created_files[:20]:
+        for filepath in self.created_files[:count]:
             if not os.path.exists(filepath):
                 continue
             try:
@@ -115,31 +118,66 @@ class RansomwareSimulator:
         )
         return renamed_count
 
-    def run_simulation(self):
+    def simulate_bulk_standard_renames(self, count=15):
         """
-        Execute the full simulation sequence:
-        1. Create test files
-        2. Rapidly modify files
-        3. Rename files to suspicious extensions
-        4. Wait briefly for detection
-        5. Cleanup
+        Simulate renaming files to standard safe extensions (e.g. adding .bak).
+        Triggers the Bulk Rename warning rule without triggering the suspicious extension rule.
+        """
+        renamed_count = 0
+        for filepath in self.created_files[:count]:
+            if not os.path.exists(filepath):
+                continue
+            try:
+                new_path = filepath + ".bak"
+                os.rename(filepath, new_path)
+                self.renamed_files[filepath] = new_path
+                renamed_count += 1
+                time.sleep(config.SIMULATION_DELAY)
+            except OSError as e:
+                logger.error("Failed to rename %s: %s", filepath, e)
 
-        Returns a summary dict.
+        logger.info(
+            "Renamed %d files to standard extensions", renamed_count,
+        )
+        return renamed_count
+
+    def run_simulation(self, sim_type="all"):
+        """
+        Execute the selected simulation scenario.
+        Allowed types: 'rapid_modification', 'bulk_rename', 'mass_extension', 'all'
         """
         logger.info("=" * 50)
-        logger.info("🧪 Starting ransomware simulation...")
+        logger.info("🧪 Starting ransomware simulation scenario: %s...", sim_type)
         logger.info("=" * 50)
 
-        files_created = self.setup_test_files()
-        time.sleep(1)
+        # Clear tracking
+        self.created_files = []
+        self.renamed_files = {}
 
-        files_modified = self.simulate_rapid_modifications()
-        time.sleep(1)
+        files_created = 0
+        files_modified = 0
+        files_renamed = 0
 
-        files_renamed = self.simulate_extension_changes()
+        if sim_type == "rapid_modification":
+            files_created = self.setup_test_files(count=50)
+            time.sleep(1)
+            files_modified = self.simulate_rapid_modifications()
+        elif sim_type == "bulk_rename":
+            files_created = self.setup_test_files(count=15)
+            time.sleep(1)
+            files_renamed = self.simulate_bulk_standard_renames(count=15)
+        elif sim_type == "mass_extension":
+            files_created = self.setup_test_files(count=15)
+            time.sleep(1)
+            files_renamed = self.simulate_extension_changes(count=15)
+        else:  # "all"
+            files_created = self.setup_test_files(count=50)
+            time.sleep(1)
+            files_modified = self.simulate_rapid_modifications()
+            time.sleep(1)
+            files_renamed = self.simulate_extension_changes(count=20)
 
         time.sleep(2)
-
         self.cleanup()
 
         result = {

@@ -44,6 +44,18 @@ IGNORED_PATTERNS = [
     "~$",
     ".pyc",
     "node_modules",
+    ".dart_tool",
+    "build/",
+    ".pub-cache",
+    ".flutter",
+    ".gradle",
+    ".idea",
+    "guardian.db",
+    "guardian.log",
+    "logs.json",
+    "alerts.json",
+    "/storage/",
+    "/logs/",
 ]
 
 API_HOST = "0.0.0.0"

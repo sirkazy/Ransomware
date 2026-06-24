@@ -8,6 +8,7 @@ import '../../providers/alerts_provider.dart';
 import '../../widgets/statistic_card.dart';
 import '../../widgets/threat_chart.dart';
 import '../../widgets/alert_card.dart';
+import '../../widgets/simulation_panel.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -157,7 +158,18 @@ class _DashboardScreenState extends State<DashboardScreen>
 
                   if (dashboard.threatActivityData.isNotEmpty)
                     ThreatChart(data: dashboard.threatActivityData),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 8),
+                  // ── Simulation Panel ─────────────────────────────
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Divider(color: AppColors.surfaceBorder, height: 28),
+                  // ),
+                  // const SimulationPanel(),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Divider(color: AppColors.surfaceBorder, height: 28),
+                  // ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -13,9 +13,11 @@ class DashboardProvider extends ChangeNotifier {
 
   DashboardProvider(this._apiService);
 
+  // ── Getters ───────────────────────────────────────────────────────
   SystemStatus? get status => _status;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  ApiService get apiService => _apiService;
 
   bool get isSecure => _status?.isSecure ?? true;
   int get threatsDetected => _status?.threatsDetected ?? 0;
