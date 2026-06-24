@@ -89,11 +89,22 @@ With both backend and frontend running:
 1. Open a new terminal window.
 2. Trigger a safe, simulated ransomware attack inside the isolated test environment:
 
+Rapid modification (WARNING)
 ```bash
-curl -X POST http://localhost:5000/api/simulate
+curl -X POST http://localhost:5000/api/simulate -H "Content-Type: application/json" -d '{"type": "rapid_modification"}'
 ```
-
-Alternatively, you can trigger the simulation directly from the frontend dashboard by clicking the **Simulator** button.
+Bulk rename (WARNING)
+```bash
+curl -X POST http://localhost:5000/api/simulate -H "Content-Type: application/json" -d '{"type": "bulk_rename"}'
+```
+Mass extension change (CRITICAL)
+```bash
+curl -X POST http://localhost:5000/api/simulate -H "Content-Type: application/json" -d '{"type": "mass_extension"}'
+```
+Full attack (ALL RULES)
+```bash
+curl -X POST http://localhost:5000/api/simulate -H "Content-Type: application/json" -d '{"type": "all"}'curl -X POST http://localhost:5000/api/simulate
+```
 
 ---
 
