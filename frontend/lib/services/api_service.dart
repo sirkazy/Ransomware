@@ -6,7 +6,7 @@ import '../models/system_status.dart';
 class ApiService {
   late final Dio _dio;
 
-  static const String _baseUrl = 'http://10.0.2.2:5000/api';
+  static const String _baseUrl = 'http://172.20.10.1:5000/api';
 
   ApiService() {
     _dio = Dio(

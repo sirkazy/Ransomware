@@ -45,6 +45,17 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> resetSystem() async {
+    try {
+      await _apiService.resetSystem();
+      await fetchStatus(showLoading: false);
+    } catch (e) {
+      _error = 'Reset failed';
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   void startAutoRefresh({Duration interval = const Duration(seconds: 5)}) {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(interval, (_) => fetchStatus(showLoading: false));

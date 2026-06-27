@@ -5,6 +5,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/alerts_provider.dart';
+import '../../providers/monitoring_provider.dart';
 import '../../widgets/statistic_card.dart';
 import '../../widgets/threat_chart.dart';
 import '../../widgets/alert_card.dart';
@@ -100,17 +101,20 @@ class _DashboardScreenState extends State<DashboardScreen>
                         ],
                       ),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.surfaceBorder),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none_rounded,
-                          color: AppColors.textSecondary,
-                          size: 22,
+                      GestureDetector(
+                        onTap: () => _showResetDialog(context, dashboard, alerts),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.surfaceBorder),
+                          ),
+                          child: const Icon(
+                            Icons.restart_alt_rounded,
+                            color: AppColors.textSecondary,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ],
@@ -206,6 +210,58 @@ class _DashboardScreenState extends State<DashboardScreen>
             );
           },
         ),
+      ),
+    );
+  }
+
+  void _showResetDialog(
+    BuildContext context,
+    DashboardProvider dashboard,
+    AlertsProvider alerts,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: const [
+            Icon(Icons.restart_alt_rounded, color: AppColors.severityWarning, size: 22),
+            SizedBox(width: 10),
+            Text(
+              'Reset System',
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        content: const Text(
+          'This will clear ALL alerts and monitoring events, returning the system to a clean Secure state.\n\nThis action cannot be undone.',
+          style: TextStyle(color: AppColors.textSecondary, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.severityWarning,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              try {
+                await dashboard.resetSystem();
+                if (context.mounted) {
+                  await alerts.fetchAlerts(showLoading: false);
+                  await context.read<MonitoringProvider>().fetchActivities(showLoading: false);
+                }
+              } catch (_) {}
+            },
+            child: const Text('Reset', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
       ),
     );
   }
