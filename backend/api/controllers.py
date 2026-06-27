@@ -12,6 +12,7 @@ from storage.database import (
     get_alert_by_id,
     get_events,
     reset_system as db_reset_system,
+    delete_alert,
 )
 from monitoring.response_handler import ResponseHandler
 from utils.logger import get_logger
@@ -20,18 +21,26 @@ import config
 logger = get_logger("controllers")
 
 
+import os
+
 def find_suspicious_process():
     """
     Use psutil to scan running processes and find the one with the most
     open file handles in any monitored directory. Returns a dict with
     pid, name, and open_files_count, or None if nothing suspicious found.
+    Excludes the backend's own process to avoid self-termination.
     """
     monitored = config.MONITORED_DIRECTORIES
     best = None
     best_count = 0
+    my_pid = os.getpid()
 
     for proc in psutil.process_iter(["pid", "name", "open_files"]):
         try:
+            pid = proc.info["pid"]
+            if pid == my_pid:
+                continue
+
             files = proc.info.get("open_files") or []
             count = sum(
                 1 for f in files
@@ -40,7 +49,7 @@ def find_suspicious_process():
             if count > best_count:
                 best_count = count
                 best = {
-                    "pid": proc.info["pid"],
+                    "pid": pid,
                     "name": proc.info["name"],
                     "open_files_count": count,
                 }
@@ -135,6 +144,10 @@ def handle_alert_action(alert_id, action):
             result["pid"] = pid
     else:
         return {"error": f"Unknown action: {action}"}, 400
+
+    # If the mitigation action succeeded, delete the resolved alert from active database
+    if result.get("success"):
+        delete_alert(alert_id)
 
     return result, 200
 

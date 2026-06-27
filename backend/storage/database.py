@@ -254,6 +254,26 @@ def clear_alerts():
     logger.info("All alerts cleared")
 
 
+def delete_alert(alert_id):
+    """Delete a specific alert from the SQLite database and JSON backup."""
+    conn = _get_connection()
+    conn.execute("DELETE FROM alerts WHERE id = ?", (alert_id,))
+    conn.commit()
+
+    # Also remove from JSON backup
+    try:
+        if os.path.exists(config.ALERTS_JSON_PATH):
+            with open(config.ALERTS_JSON_PATH, "r") as f:
+                alerts = json.load(f)
+            # Filter out the deleted alert
+            alerts = [a for a in alerts if a.get("id") != alert_id]
+            with open(config.ALERTS_JSON_PATH, "w") as f:
+                json.dump(alerts, f, indent=2)
+    except Exception as e:
+        logger.error("Failed to delete alert from JSON: %s", e)
+    logger.info("Alert %s deleted from database and JSON backup", alert_id)
+
+
 def reset_system():
     """
     Full system reset — wipes all alerts, events, and JSON log files.

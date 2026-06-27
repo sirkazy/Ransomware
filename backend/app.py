@@ -154,6 +154,7 @@ def main():
 
     simulator = RansomwareSimulator()
     set_simulator(simulator)
+    set_analyzer(components["analyzer"])
     logger.info("Simulator ready")
 
     def shutdown(signum, frame):
