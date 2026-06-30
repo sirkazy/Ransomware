@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import '../models/alert_model.dart';
 import '../models/monitoring_model.dart';
@@ -6,7 +8,9 @@ import '../models/system_status.dart';
 class ApiService {
   late final Dio _dio;
 
-  static const String _baseUrl = 'http://172.20.10.1:5000/api';
+  static final String _baseUrl = Platform.isAndroid
+      ? 'http://10.0.2.2:5000/api'
+      : 'http://localhost:5000/api';
 
   ApiService() {
     _dio = Dio(

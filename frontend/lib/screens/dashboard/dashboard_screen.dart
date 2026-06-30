@@ -22,6 +22,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _shieldPulseController;
   late Animation<double> _shieldPulseAnimation;
+  DashboardProvider? _dashboardProvider;
+  AlertsProvider? _alertsProvider;
 
   @override
   void initState() {
@@ -48,12 +50,17 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+    _alertsProvider = Provider.of<AlertsProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
     _shieldPulseController.dispose();
-    if (mounted) {
-      context.read<DashboardProvider>().stopAutoRefresh();
-      context.read<AlertsProvider>().stopAutoRefresh();
-    }
+    _dashboardProvider?.stopAutoRefresh();
+    _alertsProvider?.stopAutoRefresh();
     super.dispose();
   }
 

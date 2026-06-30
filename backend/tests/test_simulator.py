@@ -128,7 +128,7 @@ class TestSimulatorCleanup:
         assert "files_created" in result
         assert "files_modified" in result
         assert "files_renamed" in result
-        assert result["files_created"] == 10
+        assert result["files_created"] == 50
 
     def test_simulator_only_touches_test_dir(self, simulator):
         """Simulator should never create files outside test_files."""

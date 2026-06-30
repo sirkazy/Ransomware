@@ -14,6 +14,8 @@ class AlertsScreen extends StatefulWidget {
 }
 
 class _AlertsScreenState extends State<AlertsScreen> {
+  AlertsProvider? _alertsProvider;
+
   @override
   void initState() {
     super.initState();
@@ -25,10 +27,14 @@ class _AlertsScreenState extends State<AlertsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _alertsProvider = Provider.of<AlertsProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
-    if (mounted) {
-      context.read<AlertsProvider>().stopAutoRefresh();
-    }
+    _alertsProvider?.stopAutoRefresh();
     super.dispose();
   }
 

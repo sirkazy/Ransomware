@@ -15,6 +15,7 @@ class MonitoringScreen extends StatefulWidget {
 class _MonitoringScreenState extends State<MonitoringScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _blinkController;
+  MonitoringProvider? _monitoringProvider;
 
   @override
   void initState() {
@@ -33,13 +34,16 @@ class _MonitoringScreenState extends State<MonitoringScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _monitoringProvider = Provider.of<MonitoringProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
     _blinkController.dispose();
-    if (mounted) {
-      final provider = context.read<MonitoringProvider>();
-      provider.stopAutoRefresh();
-      provider.stopSimulation();
-    }
+    _monitoringProvider?.stopAutoRefresh();
+    _monitoringProvider?.stopSimulation();
     super.dispose();
   }
 
