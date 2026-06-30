@@ -8,6 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# pyrefly: ignore [missing-import]
 import pytest
 
 import config
@@ -131,7 +132,8 @@ class TestSimulatorCleanup:
         assert result["files_created"] == 50
 
     def test_simulator_only_touches_test_dir(self, simulator):
-        """Simulator should never create files outside test_files."""
+        """Simulator should never create files outside test_files.
+        """
         simulator.run_simulation()
 
         parent = os.path.dirname(TEST_DIR)
