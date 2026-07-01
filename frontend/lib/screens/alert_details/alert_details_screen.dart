@@ -4,6 +4,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
 import '../../providers/alerts_provider.dart';
 import '../../providers/dashboard_provider.dart';
+import '../../providers/monitoring_provider.dart';
 import '../../models/alert_model.dart';
 
 class AlertDetailsScreen extends StatefulWidget {
@@ -431,6 +432,70 @@ class _AlertDetailsScreenState extends State<AlertDetailsScreen> {
       _isActing = true;
       _actionResult = null;
     });
+
+    if (alertId.startsWith('LOCAL-')) {
+      try {
+        final alert = context.read<AlertsProvider>().getAlertById(alertId);
+        await Future.delayed(const Duration(milliseconds: 600)); // Simulate mitigation action latency
+
+        String displayMessage = 'Action completed';
+        if (action == 'ignore') {
+          displayMessage = 'Alert ignored';
+        } else if (action == 'quarantine') {
+          displayMessage = 'File quarantined successfully (mocked)';
+        } else if (action == 'stop_process') {
+          displayMessage = '⛔ Terminated: Suspicious simulator process (mocked)';
+        }
+
+        if (alert != null) {
+          context.read<AlertsProvider>().removeLocalAlert(alertId);
+
+          if (action == 'quarantine' || action == 'stop_process') {
+            final monitoring = context.read<MonitoringProvider>();
+            for (final path in alert.affectedFiles) {
+              monitoring.restoreFileStatus(path);
+            }
+          }
+        }
+
+        setState(() {
+          _actionResult = displayMessage;
+          _actionSuccess = true;
+        });
+
+        if (mounted) {
+          context.read<DashboardProvider>().fetchStatus(showLoading: false);
+          Navigator.of(context).pop();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.severitySafe,
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      displayMessage,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _actionResult = 'Action failed locally.';
+          _actionSuccess = false;
+        });
+      } finally {
+        setState(() => _isActing = false);
+      }
+      return;
+    }
 
     try {
       final api = context.read<DashboardProvider>().apiService;

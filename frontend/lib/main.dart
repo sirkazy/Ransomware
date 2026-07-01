@@ -4,11 +4,12 @@ import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'router/app_router.dart';
 import 'services/api_service.dart';
+import 'services/notification_service.dart';
 import 'providers/dashboard_provider.dart';
 import 'providers/monitoring_provider.dart';
 import 'providers/alerts_provider.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -21,6 +22,8 @@ void main() {
   );
 
   final apiService = ApiService();
+  final notificationService = NotificationService();
+  await notificationService.initialize();
 
   runApp(
     MultiProvider(
@@ -29,10 +32,10 @@ void main() {
           create: (_) => DashboardProvider(apiService),
         ),
         ChangeNotifierProvider(
-          create: (_) => MonitoringProvider(apiService),
+          create: (_) => MonitoringProvider(apiService, notificationService),
         ),
         ChangeNotifierProvider(
-          create: (_) => AlertsProvider(apiService),
+          create: (_) => AlertsProvider(apiService, notificationService),
         ),
       ],
       child: const RansomwareGuardianApp(),

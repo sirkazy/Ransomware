@@ -9,7 +9,6 @@ import '../../providers/monitoring_provider.dart';
 import '../../widgets/statistic_card.dart';
 import '../../widgets/threat_chart.dart';
 import '../../widgets/alert_card.dart';
-import '../../widgets/simulation_panel.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -128,7 +127,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 24),
 
-                  _buildShieldHero(context, dashboard),
+                  _buildShieldHero(context, dashboard, alerts),
                   const SizedBox(height: 20),
 
                   GridView.count(
@@ -141,13 +140,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                     children: [
                       StatisticCard(
                         label: AppStrings.threatsDetected,
-                        value: dashboard.threatsDetected,
+                        value: dashboard.threatsDetected +
+                            alerts.allAlerts.where((a) => a.id.startsWith('LOCAL-')).length,
                         icon: Icons.bug_report_rounded,
                         color: AppColors.severityCritical,
                       ),
                       StatisticCard(
                         label: AppStrings.filesMonitored,
-                        value: dashboard.filesMonitored,
+                        value: dashboard.filesMonitored +
+                            context.watch<MonitoringProvider>().localFiles.length,
                         icon: Icons.folder_open_rounded,
                         color: AppColors.primary,
                       ),
@@ -261,6 +262,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               try {
                 await dashboard.resetSystem();
                 if (context.mounted) {
+                  alerts.clearLocalAlerts();
+                  context.read<MonitoringProvider>().resetLocalMonitoring();
                   await alerts.fetchAlerts(showLoading: false);
                   await context.read<MonitoringProvider>().fetchActivities(showLoading: false);
                 }
@@ -273,8 +276,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildShieldHero(BuildContext context, DashboardProvider dashboard) {
-    final isSecure = dashboard.isSecure;
+  Widget _buildShieldHero(BuildContext context, DashboardProvider dashboard, AlertsProvider alerts) {
+    final isSecure = dashboard.isSecure &&
+        alerts.allAlerts.where((a) => a.severity == 'critical').isEmpty;
     final shieldColor =
         isSecure ? AppColors.shieldSecure : AppColors.shieldThreat;
     final statusText =

@@ -31,6 +31,12 @@ dependencies:
   # UI Effects
   shimmer: ^3.0.0
 
+  # File Picker
+  file_picker: ^8.0.0
+
+  # Local Notifications
+  flutter_local_notifications: ^17.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
